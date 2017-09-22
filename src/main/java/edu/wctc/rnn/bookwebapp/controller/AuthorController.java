@@ -5,8 +5,12 @@
  */
 package edu.wctc.rnn.bookwebapp.controller;
 
+import edu.wctc.rnn.bookwebapp.model.Author;
+import edu.wctc.rnn.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,8 +21,10 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Roshan
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/author"})
+@WebServlet(name = "AuthorController", urlPatterns = {"/authorController"})
 public class AuthorController extends HttpServlet {
+    public static final String ACTION = "action";
+    public static final String LIST_ACTION = "list";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -32,19 +38,28 @@ public class AuthorController extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AuthorController</title>");            
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AuthorController at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        String destination = "/authorList.jsp"; //default 
+        
+        try{
+            String action = request.getParameter(ACTION);
+            AuthorService authorService = new AuthorService();
+            List<Author> authorList = null;
+            
+            if(action.equalsIgnoreCase(LIST_ACTION)){
+                authorList = authorService.getAuthorList();
+                request.setAttribute("authorList", authorList);
+            }
+            
+        }catch(Exception e){
+            destination = "/authorList.jsp";
+            request.setAttribute("errorMessage", e.getMessage());
         }
+        
+        RequestDispatcher view = request.getRequestDispatcher(destination);
+        view.forward(request, response);
+        
     }
+    
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
