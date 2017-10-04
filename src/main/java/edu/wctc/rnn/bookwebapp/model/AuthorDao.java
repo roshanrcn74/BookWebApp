@@ -122,7 +122,7 @@ public int deleteAuthors(String tableName, String colName, Object id) throws Cla
 
         DataAccess db = new MySqlDataAccess(
                 "com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/book1",
+                "jdbc:mysql://localhost:3306/book",
                 "root",
                 "admin");
 
@@ -138,6 +138,13 @@ public int deleteAuthors(String tableName, String colName, Object id) throws Cla
         List<Author> list = dao.getListofAuthors();
 
         list.forEach((author) -> {
+            System.out.println(author.getAuthorId() + " " + author.getAuthorName() + " " + author.getDateAdded());
+        });
+        System.out.println("Number of record deleted :" + dao.deleteAuthors("author", "author_id", 8));
+        
+        List<Author> list1 = dao.getListofAuthors();
+
+        list1.forEach((author) -> {
             System.out.println(author.getAuthorId() + " " + author.getAuthorName() + " " + author.getDateAdded());
         });
     }

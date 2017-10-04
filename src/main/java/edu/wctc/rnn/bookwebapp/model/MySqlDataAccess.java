@@ -148,13 +148,28 @@ public class MySqlDataAccess implements DataAccess {
         return rawData;
     }
 
+    /**
+     *
+     * @param tableName
+     * @param colName
+     * @param priKey
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
     @Override
-    public int deleteRecords(String tableName, String colName, Object priKey) throws ClassNotFoundException, SQLException {
-        String sql = "delete from " + tableName + " where " + colName + " = " + priKey+";";
-        openConnection();
-        stmt = conn.createStatement();
-        int updateRecords = stmt.executeUpdate(sql);
-        closeConnection();
+    public int deleteRecords(String tableName, String colName, Object priKey) 
+            throws ClassNotFoundException, SQLException {
+        int updateRecords = 0;
+        if (tableName != null && tableName != "" && colName != null 
+                && colName!= "" && priKey != null && priKey!= ""){
+            String sql = "delete from " + tableName + " where " + colName + " = " + priKey+";";
+            openConnection();
+            stmt = conn.createStatement();
+            updateRecords = stmt.executeUpdate(sql);
+            closeConnection();
+        }
+        
         return updateRecords;
     }
 
