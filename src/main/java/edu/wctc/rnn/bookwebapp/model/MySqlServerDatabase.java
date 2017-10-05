@@ -7,6 +7,7 @@ package edu.wctc.rnn.bookwebapp.model;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -20,10 +21,11 @@ import java.util.Vector;
  *
  * @author Roshan
  */
-public class MySqlDataAccess implements DataAccess {
+public class MySqlServerDatabase implements DataAccess {
 
     private Connection conn;
     private Statement stmt;
+    private PreparedStatement pstmt;
     private final int ALL_RECORDS = 0;
     private ResultSet rs;
 
@@ -32,7 +34,7 @@ public class MySqlDataAccess implements DataAccess {
     private String userName;
     private String passWord;
 
-    public MySqlDataAccess(String driverClass, String url, String userName, String passWord) {
+    public MySqlServerDatabase(String driverClass, String url, String userName, String passWord) {
         setUrl(url);
         setDriverClass(driverClass);
         setUserName(userName);
@@ -41,6 +43,82 @@ public class MySqlDataAccess implements DataAccess {
 
     }
 
+    /**
+     * Returns
+     *
+     * @param tableName
+     * @param maxRecords
+     * @return
+     * @throws SQLException
+     */
+    @Override
+    public List<Map<String, Object>> getAllRecords(String tableName, int maxRecords)
+            throws SQLException, ClassNotFoundException {
+        List<Map<String, Object>> rawData = new Vector<>(); //can use ArrayList due to multithreddig issue use Vector
+        String sql = "";
+
+        if (maxRecords > ALL_RECORDS) {
+            sql = "select * from " + tableName + "limit " + maxRecords;
+        } else {
+            sql = "select * from " + tableName;
+        }
+        openConnection();
+        stmt = conn.createStatement();
+        rs = stmt.executeQuery(sql);
+
+        ResultSetMetaData rsmd = rs.getMetaData();
+        int colCount = rsmd.getColumnCount();
+        Map<String, Object> record = null;
+        while (rs.next()) {
+            record = new LinkedHashMap<>();
+            for (int colNum = 1; colNum <= colCount; colNum++) {
+                record.put(rsmd.getColumnName(colNum), rs.getObject(colNum));
+            }
+            rawData.add(record);
+        }
+        closeConnection();
+        return rawData;
+    }
+    
+    @Override
+    public int creatRecord(String tableName, List<String> colNames, List<Object> colValues){
+        
+        
+        return 1;
+    }
+
+    /**
+     *
+     * @param tableName
+     * @param colName
+     * @param pkValue
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException
+     */
+    @Override
+    public int deleteRecordbyId(String tableName, String colName, Object pkValue) 
+            throws ClassNotFoundException, SQLException {
+        int recordDeleted = 0;
+        if (tableName != null && !"".equals(tableName) && colName != null 
+                && !"".equals(colName) && pkValue != null && pkValue!= ""){
+            String sql = "delete from " + tableName + " where " + colName + " = ?";
+//            if (pkValue instanceof String){
+//                sql += "'" + pkValue.toString() + "'";
+//            } else {
+//                sql += Long.parseLong(pkValue.toString());
+//            }
+            
+            openConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setObject(1, pkValue);
+            recordDeleted = pstmt.executeUpdate();
+            closeConnection();
+        }
+        
+        return recordDeleted;
+    }
+    
     public Connection getConn() {
         return conn;
     }
@@ -111,70 +189,8 @@ public class MySqlDataAccess implements DataAccess {
         }
     }
 
-    /**
-     * Returns
-     *
-     * @param tableName
-     * @param maxRecords
-     * @return
-     * @throws SQLException
-     */
-    @Override
-    public List<Map<String, Object>> getAllRecords(String tableName, int maxRecords)
-            throws SQLException, ClassNotFoundException {
-        List<Map<String, Object>> rawData = new Vector<>(); //can use ArrayList due to multithreddig issue use Vector
-        String sql = "";
-
-        if (maxRecords > ALL_RECORDS) {
-            sql = "select * from " + tableName + "limit " + maxRecords;
-        } else {
-            sql = "select * from " + tableName;
-        }
-        openConnection();
-        stmt = conn.createStatement();
-        rs = stmt.executeQuery(sql);
-
-        ResultSetMetaData rsmd = rs.getMetaData();
-        int colCount = rsmd.getColumnCount();
-        Map<String, Object> record = null;
-        while (rs.next()) {
-            record = new LinkedHashMap<>();
-            for (int colNum = 1; colNum <= colCount; colNum++) {
-                record.put(rsmd.getColumnName(colNum), rs.getObject(colNum));
-            }
-            rawData.add(record);
-        }
-        closeConnection();
-        return rawData;
-    }
-
-    /**
-     *
-     * @param tableName
-     * @param colName
-     * @param priKey
-     * @return
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     */
-    @Override
-    public int deleteRecords(String tableName, String colName, Object priKey) 
-            throws ClassNotFoundException, SQLException {
-        int updateRecords = 0;
-        if (tableName != null && tableName != "" && colName != null 
-                && colName!= "" && priKey != null && priKey!= ""){
-            String sql = "delete from " + tableName + " where " + colName + " = " + priKey+";";
-            openConnection();
-            stmt = conn.createStatement();
-            updateRecords = stmt.executeUpdate(sql);
-            closeConnection();
-        }
-        
-        return updateRecords;
-    }
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        MySqlDataAccess db = new MySqlDataAccess(
+        DataAccess db = new MySqlServerDatabase(
                 "com.mysql.jdbc.Driver",
                 "jdbc:mysql://localhost:3306/book",
                 "root",
@@ -186,7 +202,7 @@ public class MySqlDataAccess implements DataAccess {
             System.out.println(rec);
         });
 
-        System.out.println("No of record(s) deleted : " + db.deleteRecords("author", "author_id", 6));
+        System.out.println("No of record(s) deleted : " + db.deleteRecordbyId("author", "author_id", 5));
         
         List<Map<String, Object>> list1 = db.getAllRecords("author", 0);
         list1.forEach((Map<String, Object> rec) -> {

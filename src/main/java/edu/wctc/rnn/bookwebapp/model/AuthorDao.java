@@ -22,6 +22,8 @@ public final class AuthorDao implements IAuthorDao {
 //    private String userName;
 //    private String passWord;
     private DataAccess db;
+    private final String AUTHOR_TBL = "author";
+    private final String AUTHOR_PK = "author_id";
 
     public AuthorDao(/*String url, String driverClass, String userName,
             String passWord,*/ DataAccess db) {
@@ -37,12 +39,12 @@ public final class AuthorDao implements IAuthorDao {
             throws SQLException, ClassNotFoundException {
 
         List<Author> list = new Vector<>();
-        List<Map<String, Object>> rawData = db.getAllRecords("author", 0);
+        List<Map<String, Object>> rawData = db.getAllRecords("AUTHOR_TBL", 0);
         Author author = null;
 
         for (Map<String, Object> rec : rawData) {
             author = new Author();
-            Object objRecId = rec.get("author_id");
+            Object objRecId = rec.get("AUTHOR_PK");
             Integer recId = objRecId == null ? 0 : Integer.parseInt(objRecId.toString());
             author.setAuthorId(recId);
 
@@ -73,9 +75,12 @@ public final class AuthorDao implements IAuthorDao {
         return list;
     }
 
-public int deleteAuthors(String tableName, String colName, Object id) throws ClassNotFoundException, SQLException{
-    
-    return db.deleteRecords(tableName, colName, id);
+    @Override
+    public int removeAuthorById(Integer id) throws ClassNotFoundException, SQLException{
+    if (id == null || id < 1 ){
+        throw new IllegalArgumentException("It must be integer greater than 0");
+    }
+    return db.deleteRecordbyId("AUTHOR_TBL", "AUTHOR_PK", id);  
 }
 //    public String getUrl() {
 //        return url;
@@ -120,7 +125,7 @@ public int deleteAuthors(String tableName, String colName, Object id) throws Cla
     //psvm
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
-        DataAccess db = new MySqlDataAccess(
+        DataAccess db = new MySqlServerDatabase(
                 "com.mysql.jdbc.Driver",
                 "jdbc:mysql://localhost:3306/book",
                 "root",
@@ -140,7 +145,7 @@ public int deleteAuthors(String tableName, String colName, Object id) throws Cla
         list.forEach((author) -> {
             System.out.println(author.getAuthorId() + " " + author.getAuthorName() + " " + author.getDateAdded());
         });
-        System.out.println("Number of record deleted :" + dao.deleteAuthors("author", "author_id", 8));
+        System.out.println("Number of record deleted :" + dao.removeAuthorById( 8));
         
         List<Author> list1 = dao.getListofAuthors();
 

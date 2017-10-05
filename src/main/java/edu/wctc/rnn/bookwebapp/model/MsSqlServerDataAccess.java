@@ -92,6 +92,33 @@ public class MsSqlServerDataAccess implements DataAccess {
         closeConnection();
         return rawData;
     }
+    
+    @Override
+    public int creatRecord(String tableName, List<String> colNames, List<Object> colValues) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+     public int deleteRecordbyId(String tableName, String colName, Object pkValue) 
+            throws ClassNotFoundException, SQLException {
+        int recordDeleted = 0;
+        if (tableName != null && !"".equals(tableName) && colName != null 
+                && !"".equals(colName) && pkValue != null && pkValue!= ""){
+            String sql = "delete from " + tableName + " where " + colName + " = ";
+            if (pkValue instanceof String){
+                sql += "'" + pkValue.toString() + "'";
+            } else {
+                sql += Long.parseLong(pkValue.toString());
+            }
+            
+            openConnection();
+            stmt = conn.createStatement();
+            recordDeleted = stmt.executeUpdate(sql);
+            closeConnection();
+        }
+        
+        return recordDeleted;
+    }
 
     public String getUrl() {
         return url;
@@ -134,7 +161,7 @@ public class MsSqlServerDataAccess implements DataAccess {
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        MsSqlServerDataAccess db = new MsSqlServerDataAccess(
+        DataAccess db = new MsSqlServerDataAccess(
 
 //                "org.apache.derby.jdbc.ClientDriver",
 //                "jdbc:derby://localhost:1527/sample",
@@ -149,16 +176,7 @@ public class MsSqlServerDataAccess implements DataAccess {
             System.out.println(list.get(1).keySet());
         list.forEach((Map<String, Object> rec) -> {
             System.out.println(rec.values());
-        });
-        // As the next exercise, can you all try to print the data from the table 
-        // just as how it looks in the table?
-        // Column headers at the top and not to repeat, seperated by tab
-        // The data rows to follow
-        // Battery came back. Please call again        
+        });    
     }
-
-    @Override
-    public int deleteRecords(String tableName, String colName, Object priKey) throws ClassNotFoundException, SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
+    
 }

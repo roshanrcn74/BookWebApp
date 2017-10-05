@@ -26,9 +26,13 @@ public interface DataAccess {
      * @throws SQLException
      * @throws java.lang.ClassNotFoundException
      */
-    List<Map<String, Object>> getAllRecords(String tableName, int maxRecords) throws SQLException, ClassNotFoundException;
+    List<Map<String, Object>> getAllRecords(String tableName, int maxRecords) 
+            throws SQLException, ClassNotFoundException;
 
     void openConnection() throws ClassNotFoundException, SQLException;
     
-    int deleteRecords(String tableName, String colName, Object priKey) throws ClassNotFoundException, SQLException;
+    int deleteRecordbyId(String tableName, String colName, Object priKey) 
+            throws ClassNotFoundException, SQLException;
+    
+    public int creatRecord(String tableName, List<String> colNames, List<Object> colValues);
 }

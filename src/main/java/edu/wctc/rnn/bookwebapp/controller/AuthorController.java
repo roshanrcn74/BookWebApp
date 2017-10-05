@@ -9,7 +9,7 @@ import edu.wctc.rnn.bookwebapp.model.Author;
 import edu.wctc.rnn.bookwebapp.model.AuthorDao;
 import edu.wctc.rnn.bookwebapp.model.AuthorService;
 import edu.wctc.rnn.bookwebapp.model.IAuthorDao;
-import edu.wctc.rnn.bookwebapp.model.MySqlDataAccess;
+import edu.wctc.rnn.bookwebapp.model.MySqlServerDatabase;
 import java.io.IOException;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
@@ -51,7 +51,7 @@ public class AuthorController extends HttpServlet {
 //                "jdbc:mysql://localhost:3306/book1",
 //                "root",
 //                "admin",
-                new MySqlDataAccess(
+                new MySqlServerDatabase(
         "com.mysql.jdbc.Driver",
                 "jdbc:mysql://localhost:3306/book1",
                 "root",
