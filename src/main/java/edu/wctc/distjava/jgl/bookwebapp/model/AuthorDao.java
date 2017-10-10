@@ -19,6 +19,8 @@ public class AuthorDao implements IAuthorDao {
     private DataAccess db;
     private final String AUTHOR_TBL = "author";
     private final String AUTHOR_PK = "author_id";
+    private final String AUTHOR_NAME = "author_name";
+    private final String DATE_ADDED = "date_added";
 
     public AuthorDao(String driverClass, String url, 
             String userName, String password,
@@ -31,25 +33,20 @@ public class AuthorDao implements IAuthorDao {
         setDb(db);
     }
     
-    public int addAuthor(Author author){
-       
-        
-        return 1;
-    }
-    
     @Override
-    public int addAuthor(String tableName, List<String> colName, List<Object> colValue) 
+    public int addAuthor(List<Object> colValue) 
             throws SQLException, ClassNotFoundException{
         db.openConnection(driverClass, url, userName, password);
-        int recordAdded = db.addRecord(tableName, colName, colValue);
+        int recordAdded = db.addRecord(AUTHOR_TBL, Arrays.asList(AUTHOR_NAME, DATE_ADDED), colValue);
         db.closeConnection();
         return recordAdded;
     }
     
     @Override
-    public int updateAuthor(String tableName, List<String> colName, List<Object> colValue, String pkName, Object pkValue)throws SQLException, ClassNotFoundException{
+    public int updateAuthor(List<Object> colValue, Object pkValue)
+            throws SQLException, ClassNotFoundException{
         db.openConnection(driverClass, url, userName, password);
-        int recordUpdated = db.updateRecord(tableName, colName, colValue, pkName, pkValue);
+        int recordUpdated = db.updateRecord(AUTHOR_TBL, Arrays.asList(AUTHOR_NAME, DATE_ADDED), colValue, AUTHOR_PK, pkValue);
         db.closeConnection();
         return recordUpdated;
     }
@@ -154,10 +151,9 @@ public class AuthorDao implements IAuthorDao {
             System.out.println(" Record is not deleted, Please check the ID");
         }
         
-        dao.addAuthor("author", Arrays.asList("author_name", "date_added"), Arrays.asList("Steve Jobs", "2017-07-23"));
+        dao.addAuthor(Arrays.asList("Steve Jobs", "2017-07-23"));
         
-        dao.updateAuthor("author", Arrays.asList("author_name", "date_added"), 
-                Arrays.asList("Brian Thomas", "2017-09-23"), "author_id", 9);
+        dao.updateAuthor(Arrays.asList("Brian Thomas", "2017-09-23"), 9);
         
         List<Author> list = dao.getListOfAuthors();
         for(Author a: list) {

@@ -11,8 +11,8 @@ public interface IAuthorDao {
 
    public abstract int removeAuthorById(Integer id) throws ClassNotFoundException, SQLException;
    public abstract List<Author> getListOfAuthors() throws SQLException, ClassNotFoundException;
-   public abstract int addAuthor(String tableName, List<String> colName, List<Object> colValue) 
+   public abstract int addAuthor(List<Object> colValue) 
            throws SQLException, ClassNotFoundException;
-   public int updateAuthor(String tableName, List<String> colName, List<Object> colValue, String pkName, Object pkValue)
+   public int updateAuthor(List<Object> colValue, Object pkValue)
            throws SQLException, ClassNotFoundException;
 }

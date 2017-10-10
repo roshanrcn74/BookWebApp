@@ -7,7 +7,7 @@
     <version>1.0.0b1</version>
     <packaging>war</packaging>
 
-    <name>bookWebApp</name>
+    <name>bookWebApp1</name>
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>

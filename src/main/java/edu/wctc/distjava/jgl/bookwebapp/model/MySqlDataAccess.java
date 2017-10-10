@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -90,13 +89,15 @@ public class MySqlDataAccess implements DataAccess {
      * @param tableName
      * @param colNames
      * @param colValues
-     * @param id
+     * @param pkColName
+     * @param pkValue
      * @return
      * @throws SQLException
      */
     @Override
     public int updateRecord(String tableName, List<String> colNames,
-            List<Object> colValues, String pkName, Object pkValue) throws SQLException {
+            List<Object> colValues, String pkColName
+            , Object pkValue) throws SQLException {
 
         String sql = "UPDATE " + tableName + " SET ";
 
@@ -107,10 +108,10 @@ public class MySqlDataAccess implements DataAccess {
                 sql += colNames.get(i) + " = " + "?";
             }
         }
-        sql += " WHERE " + pkName + " = " + pkValue + ";";
+        sql += " WHERE " + pkColName + " = " + pkValue + ";";
 
         if (DEBUG) {
-            System.out.println(sql.toString());
+            System.out.println(sql);
         }
 
         pstmt = conn.prepareStatement(sql);
