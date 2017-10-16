@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * Implementation class for the database operations for a MySQL database. 
+ * Contains CRUD operations for any database table with any number of columns
+ * 
+ * @author Roshan
+ */
 public class MsSqlServerDataAccess implements DataAccess{
 
     private final int ALL_RECORDS = 0;
@@ -23,10 +29,22 @@ public class MsSqlServerDataAccess implements DataAccess{
     private String userName;
     private String password;
 
+    /**
+     * Default constructor
+     */
     public MsSqlServerDataAccess() {
 
     }
 
+    /**
+     * Opens the connection for a MySQL server database with the given parameters
+     * @param driverClass
+     * @param url
+     * @param userName
+     * @param password
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public void openConnection(String driverClass,
             String url, String userName, String password)
@@ -36,6 +54,10 @@ public class MsSqlServerDataAccess implements DataAccess{
         conn = DriverManager.getConnection(url, userName, password);
     }
 
+    /**
+     * Closes the connection for a given MySQL database 
+     * @throws SQLException 
+     */
     @Override
     public void closeConnection() throws SQLException {
         if (conn != null) {
@@ -43,6 +65,15 @@ public class MsSqlServerDataAccess implements DataAccess{
         }
     }
 
+    /**
+     * Deletes any record from any table of the database if the table name and 
+     * the Id is given.
+     * @param tableName
+     * @param pkColName
+     * @param pkValue
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public int deleteRecordById(String tableName, String pkColName,
             Object pkValue) throws SQLException {
@@ -104,16 +135,40 @@ public class MsSqlServerDataAccess implements DataAccess{
         return rawData;
     }
 
+    /**
+     * Adds a record to any table with the given details
+     * @param tableName
+     * @param colNames
+     * @param colValue
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public int addRecord(String tableName, List<String> colNames, List<Object> colValue) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Updates the record with the given details
+     * @param tableName
+     * @param colNames
+     * @param colValue
+     * @param pkName
+     * @param pkValue
+     * @return
+     * @throws SQLException 
+     */
     @Override
     public int updateRecord(String tableName, List<String> colNames, List<Object> colValue, String pkName, Object pkValue) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Main method for testing
+     * @param args
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
 
         MsSqlServerDataAccess db = new MsSqlServerDataAccess();
@@ -127,5 +182,18 @@ public class MsSqlServerDataAccess implements DataAccess{
             System.out.println(rec);
         }
 
+    }
+
+    /**
+     * Finds any record from any table for a given id and the table name
+     * @param tableName
+     * @param pkColName
+     * @param pkValue
+     * @return
+     * @throws SQLException 
+     */
+    @Override
+    public Map<String, Object> findRecordById(String tableName, String pkColName, Object pkValue) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

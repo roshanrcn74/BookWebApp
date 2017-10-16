@@ -179,4 +179,10 @@ public class DerbyServerDataAccess implements DataAccess{
         db.closeConnection();
 
     }
+
+    @Override
+    public Map<String, Object> findRecordById(String tableName, String pkColName, Object pkValue) throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
 }

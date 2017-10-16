@@ -11,7 +11,8 @@ import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
 import edu.wctc.distjava.jgl.bookwebapp.model.IAuthorDao;
 import edu.wctc.distjava.jgl.bookwebapp.model.MySqlDataAccess;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.List;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -21,17 +22,32 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- *
+ * This class acts as the Controller servlet for the Author operations. 
+ * This controller handles all the operations that come from the UI and 
+ * diverts the request to the appropriate method of the service class. 
  * @author jlombardo
  */
-@WebServlet(name = "AuthorController", urlPatterns = {"/authorController"})
+@WebServlet(name = "AuthorController", urlPatterns = {"/ac"})
 public class AuthorController extends HttpServlet {
+
     public static final String ACTION = "action";
-    public static final String LIST_ACTION = "list";
+    public static final String LIST_ACTION = "displayList";
+    public static final String DELETE_ACTION = "Delete";
+    public static final String EDIT_ACTION = "Edit";
+    public static final String SAVECANCEL_ACTION = "SaveCancel";
+    public static final String ADD_ACTION = "Add";
+    public static final String AUTHOR_NAME = "aName";
+    public static final String DATE_ADDED = "aDateAdded";
+    public static final String UPDATE = "update";
+    public static final String REC_ADD = "rec";
+    
+    public static final String ID = "id";
+    
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
+     * methods.This method contains the logic to divert the requests to the appropriate 
+     * method of the service class based on the requests coming from the UI.
      *
      * @param request servlet request
      * @param response servlet response
@@ -43,36 +59,70 @@ public class AuthorController extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         String destination = "/authorList.jsp"; // default
-        
+
         try {
             String action = request.getParameter(ACTION);
-            
+            String aName = request.getParameter(AUTHOR_NAME);
+            String aDateAdded = request.getParameter(DATE_ADDED);
+            String addEdit = request.getParameter(REC_ADD);
+            String id = request.getParameter(ID);
+            String butt_action = request.getParameter("button_action");
+
             IAuthorDao dao = new AuthorDao(
-                "com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/book",
-                "root", "admin",
-                new MySqlDataAccess()
+                    "com.mysql.jdbc.Driver",
+                    "jdbc:mysql://localhost:3306/book",
+                    "root", "admin",
+                    new MySqlDataAccess()
             );
-        
-            AuthorService authorService = 
-                new AuthorService(dao);
-        
+
+            AuthorService authorService
+                    = new AuthorService(dao);
+
             List<Author> authorList = null;
-            
-            if(action.equalsIgnoreCase(LIST_ACTION)) {
-                authorList = authorService.getAuthorList();
-                request.setAttribute("authorList", authorList);
+            Author author = null;
+
+            if (action.equalsIgnoreCase(LIST_ACTION)) {
+                refreshList(authorService, request);
+            } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
+                int recordDeleted = authorService.removeAuthorById(id);
+
+                refreshList(authorService, request);
+            } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
+                author = authorService.findAuthor(id);
+                request.setAttribute("author", author);
+                destination = "/authorEdit.jsp";
+
+            } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
+                if(butt_action.equalsIgnoreCase("Save")){
+                    if (addEdit.equalsIgnoreCase(UPDATE)) {
+                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
+                    } else {
+                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
+                    }                   
+                } 
+                refreshList(authorService, request);
+            } else if (action.equalsIgnoreCase(ADD_ACTION)) {
+                request.setAttribute("date", authorService.getDate());
+                destination = "/authorAdd.jsp";
+
             }
-            
-        } catch(Exception e) {
+
+        } catch (Exception e) {
             destination = "/authorList.jsp";
             request.setAttribute("errMessage", e.getMessage());
         }
-        
+
         RequestDispatcher view
                 = request.getRequestDispatcher(destination);
         view.forward(request, response);
 
+    }
+
+    private void refreshList(AuthorService authorService, HttpServletRequest request) 
+            throws ClassNotFoundException, SQLException {
+        List<Author> authorList;
+        authorList = authorService.getAuthorList();
+        request.setAttribute("authorList", authorList);
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

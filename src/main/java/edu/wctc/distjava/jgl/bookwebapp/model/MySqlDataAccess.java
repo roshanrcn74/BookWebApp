@@ -80,7 +80,6 @@ public class MySqlDataAccess implements DataAccess {
         for (int i = 1; i <= colValues.size(); i++) {
             pstmt.setObject(i, colValues.get(i - 1));
         }
-
         return pstmt.executeUpdate();
     }
 
@@ -100,15 +99,14 @@ public class MySqlDataAccess implements DataAccess {
             , Object pkValue) throws SQLException {
 
         String sql = "UPDATE " + tableName + " SET ";
+        
+        StringJoiner sj = new StringJoiner(" = ?, ", "", " = ?");
 
-        for (int i = 0; i < colNames.size(); i++) {
-            if (i < colNames.size() - 1) {
-                sql += colNames.get(i) + " = " + "?, ";
-            } else {
-                sql += colNames.get(i) + " = " + "?";
-            }
+        for (String col : colNames) {
+            sj.add(col);
         }
-        sql += " WHERE " + pkColName + " = " + pkValue + ";";
+
+        sql += sj + " WHERE " + pkColName + " = ?;"; 
 
         if (DEBUG) {
             System.out.println(sql);
@@ -119,6 +117,7 @@ public class MySqlDataAccess implements DataAccess {
         for (int i = 1; i <= colValues.size(); i++) {
             pstmt.setObject(i, colValues.get(i - 1));
         }
+        pstmt.setObject(colValues.size() + 1, pkValue);
         return pstmt.executeUpdate();
     }
 
@@ -135,7 +134,33 @@ public class MySqlDataAccess implements DataAccess {
 
         return recsDeleted;
     }
+    
+    @Override
+    public Map<String, Object> findRecordById(String tableName, String pkColName, Object pkValue)
+            throws SQLException {
+        String sql = null;
 
+        if (pkValue != null) {
+            sql = "select * from " + tableName + " where " + pkColName + " = ?";
+        } 
+
+        pstmt = conn.prepareStatement(sql);
+        pstmt.setObject(1, pkValue);
+        rs = pstmt.executeQuery();
+
+        ResultSetMetaData rsmd = rs.getMetaData();
+        System.out.println("Meta Data " + rsmd);
+        int colCount = rsmd.getColumnCount();
+        Map<String, Object> record = null;
+
+        while (rs.next()) {
+            record = new LinkedHashMap<>();
+            for (int colNum = 1; colNum <= colCount; colNum++) {
+                record.put(rsmd.getColumnName(colNum), rs.getObject(colNum));
+            }
+        }
+        return record;
+    }
     /**
      * Returns records from a table. Requires and open connection.
      *
@@ -161,7 +186,7 @@ public class MySqlDataAccess implements DataAccess {
         rs = stmt.executeQuery(sql);
 
         ResultSetMetaData rsmd = rs.getMetaData();
-        System.out.println("Meta Data " + rsmd);
+
         int colCount = rsmd.getColumnCount();
         Map<String, Object> record = null;
 
@@ -172,7 +197,6 @@ public class MySqlDataAccess implements DataAccess {
             }
             rawData.add(record);
         }
-
         return rawData;
     }
 
@@ -183,27 +207,32 @@ public class MySqlDataAccess implements DataAccess {
                 "jdbc:mysql://localhost:3306/book",
                 "root", "admin");
 
-        db.addRecord("author", Arrays.asList("author_name", "date_added"), Arrays.asList("Gathi", "2017-03-05"));
-
-        int recsDeleted = db.deleteRecordById("author", "author_id", 1);
-        System.out.println("No. of Recs Deleted: " + recsDeleted);
-       
-        List<Map<String, Object>> list = db.getAllRecords("author", 0);
+//        db.addRecord("author", Arrays.asList("author_name", "date_added"), Arrays.asList("Gathi", "2017-03-05"));
+//
+//        int recsDeleted = db.deleteRecordById("author", "author_id", 1);
+//        System.out.println("No. of Recs Deleted: " + recsDeleted);
+//       
+//        List<Map<String, Object>> list = db.getAllRecords("author", 0);
+//        
+//        for (Map<String, Object> rec : list) {
+//            System.out.println(rec);
+//        }
+//
+//        db.updateRecord("author", Arrays.asList("author_name", "date_added"),
+//                Arrays.asList("Kall Lewis", "2017-08-05"), "author_id", 3);
+//        
+//        List<Map<String, Object>> list1 = db.getAllRecords("author", 0);
+//        
+//        for (Map<String, Object> rec : list1) {
+//            System.out.println(rec);
+//        }
         
-        for (Map<String, Object> rec : list) {
-            System.out.println(rec);
-        }
+        Map<String, Object> rec = db.findRecordById("author", "author_id", 15);
+        //if (!record.isEmpty()) System.out.println(" Record found " + record.get(0).get("author_name"));
 
-        db.updateRecord("author", Arrays.asList("author_name", "date_added"),
-                Arrays.asList("Robin Smith", "2017-08-05"), "author_id", 3);
-        
-        List<Map<String, Object>> list1 = db.getAllRecords("author", 0);
-        
-        for (Map<String, Object> rec : list1) {
-            System.out.println(rec);
-        }
-
+            System.out.println(" Record found : " + rec.get("author_id") + " "
+                    + rec.get("author_name") + " " + rec.get("date_added"));
+   
         db.closeConnection();
     }
-
 }

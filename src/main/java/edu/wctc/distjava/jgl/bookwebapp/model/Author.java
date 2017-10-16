@@ -4,47 +4,97 @@ import java.util.Date;
 import java.util.Objects;
 
 /**
- *
+ * This is the POJO used to hold the details of the Author object. Also contains
+ * the getter and setter methods for the properties of the author
  * @author jlombardo
  */
 public class Author {
+    
+    /**
+     * 
+     */
     private Integer authorId;
+    
+    /**
+     * 
+     */
     private String authorName;
+    
+    /**
+     * 
+     */
     private Date dateAdded;
 
+    /**
+     * The default constructor
+     */
     public Author() {
     }
 
+    /**
+     * 
+     * @param authorId 
+     */
     public Author(Integer authorId) {
         this.authorId = authorId;
     }
 
+    /**
+     * 
+     * @param authorId
+     * @param authorName
+     * @param dateAdded 
+     */
     public Author(Integer authorId, String authorName, Date dateAdded) {
         this.authorId = authorId;
         this.authorName = authorName;
         this.dateAdded = dateAdded;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public Integer getAuthorId() {
         return authorId;
     }
 
+    /**
+     * 
+     * @param authorId 
+     */
     public void setAuthorId(Integer authorId) {
         this.authorId = authorId;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getAuthorName() {
         return authorName;
     }
 
+    /**
+     * 
+     * @param authorName 
+     */
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public Date getDateAdded() {
         return dateAdded;
     }
 
+    /**
+     * 
+     * @param dateAdded 
+     */
     public void setDateAdded(Date dateAdded) {
         this.dateAdded = dateAdded;
     }
@@ -74,7 +124,5 @@ public class Author {
     @Override
     public String toString() {
         return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + '}';
-    }
-    
-    
+    }        
 }

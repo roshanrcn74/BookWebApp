@@ -8,7 +8,8 @@ import java.util.Map;
 import java.util.Vector;
 
 /**
- *
+ * This is the implementation class of the IAuthorDao interface. This class has the implementations for
+ * all the CRUD operations for the Author object.
  * @author jlombardo
  */
 public class AuthorDao implements IAuthorDao {
@@ -22,6 +23,14 @@ public class AuthorDao implements IAuthorDao {
     private final String AUTHOR_NAME = "author_name";
     private final String DATE_ADDED = "date_added";
 
+    /**
+     * Creates the object with the provided parameters
+     * @param driverClass
+     * @param url
+     * @param userName
+     * @param password
+     * @param db 
+     */
     public AuthorDao(String driverClass, String url, 
             String userName, String password,
             DataAccess db) {
@@ -33,6 +42,13 @@ public class AuthorDao implements IAuthorDao {
         setDb(db);
     }
     
+    /**
+     * Adds an author to the database with the given parameters
+     * @param colValue
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     @Override
     public int addAuthor(List<Object> colValue) 
             throws SQLException, ClassNotFoundException{
@@ -42,6 +58,14 @@ public class AuthorDao implements IAuthorDao {
         return recordAdded;
     }
     
+    /**
+     * Updates the author record in a database for a given record
+     * @param colValue
+     * @param pkValue
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     @Override
     public int updateAuthor(List<Object> colValue, Object pkValue)
             throws SQLException, ClassNotFoundException{
@@ -51,6 +75,13 @@ public class AuthorDao implements IAuthorDao {
         return recordUpdated;
     }
     
+    /**
+     * Removes an author record from the database for a given author id
+     * @param id
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
     @Override
     public final int removeAuthorById(Integer id) throws ClassNotFoundException, SQLException {
         if(id == null || id < 1) {
@@ -62,6 +93,48 @@ public class AuthorDao implements IAuthorDao {
         return recDeleted;
     }
     
+    /**
+     * This method finds an author record for a given author id. returns null if the author is not found
+     * @param id
+     * @return
+     * @throws ClassNotFoundException
+     * @throws SQLException 
+     */
+    @Override
+    public final Author findAuthorById(Integer id) throws ClassNotFoundException, SQLException{
+        if(id == null || id < 1) {
+            throw new IllegalArgumentException("id must be a Integer greater than 0");
+        }
+        db.openConnection(driverClass, url, userName, password);
+        Map<String,Object> rec  = db.findRecordById(AUTHOR_TBL, AUTHOR_PK, id);
+        Author author = null;
+
+            author = new Author(); 
+              
+              Object objRecId = rec.get(AUTHOR_PK);
+              Integer recId = objRecId == null ? 
+                      0 : Integer.parseInt(objRecId.toString());
+              author.setAuthorId(recId);
+             
+              Object objName = rec.get("author_name");
+              String authorName = objName == null ? "" : objName.toString();
+              author.setAuthorName(authorName);
+              
+              Object objRecAdded = rec.get("date_added");
+              Date recAdded = objRecAdded == null ? null : (Date)objRecAdded;
+              author.setDateAdded(recAdded);
+
+        db.closeConnection();
+        
+        return author;
+    }
+    
+    /**
+     * Gets the list of all authors from the database
+     * @return
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     @Override
     public final List<Author> getListOfAuthors() 
             throws SQLException, ClassNotFoundException {
@@ -94,48 +167,92 @@ public class AuthorDao implements IAuthorDao {
         return list;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public DataAccess getDb() {
         return db;
     }
 
+    /**
+     * 
+     * @param db 
+     */
     public void setDb(DataAccess db) {
         this.db = db;
     }
     
-    
-
+    /**
+     * 
+     * @return 
+     */
     public String getDriverClass() {
         return driverClass;
     }
 
+    /**
+     * 
+     * @param driverClass 
+     */
     public void setDriverClass(String driverClass) {
         this.driverClass = driverClass;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getUrl() {
         return url;
     }
 
+    /**
+     * 
+     * @param url 
+     */
     public void setUrl(String url) {
         this.url = url;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getUserName() {
         return userName;
     }
 
+    /**
+     * 
+     * @param userName 
+     */
     public void setUserName(String userName) {
         this.userName = userName;
     }
 
+    /**
+     * 
+     * @return 
+     */
     public String getPassword() {
         return password;
     }
 
+    /**
+     * 
+     * @param password 
+     */
     public void setPassword(String password) {
         this.password = password;
     }
     
+    /**
+     * Main method - This is only for testing
+     * @param args
+     * @throws SQLException
+     * @throws ClassNotFoundException 
+     */
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
         IAuthorDao dao = new AuthorDao(
             "com.mysql.jdbc.Driver",
