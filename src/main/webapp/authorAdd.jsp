@@ -26,7 +26,7 @@
                     <table class="tabe table-striped table-bordered table-hover table-condensed">
                         <tr>
                             <td>Author Name : </td>
-                            <td><input type="text" class="form-control" placeholder="Author Name" name="aName" value="${author.authorName}"></td>
+                            <td class="col-xs-12 col-sm-6 col-md-8"><input type="text" maxlength=46 class="form-control" placeholder="Author Name" name="aName" value="${author.authorName}"></td>
                         </tr>
                         <tr>
                             <td>Date Added  : </td>

@@ -40,7 +40,6 @@ public class AuthorController extends HttpServlet {
     public static final String DATE_ADDED = "aDateAdded";
     public static final String UPDATE = "update";
     public static final String REC_ADD = "rec";
-    
     public static final String ID = "id";
     
 
@@ -78,13 +77,12 @@ public class AuthorController extends HttpServlet {
             AuthorService authorService
                     = new AuthorService(dao);
 
-            List<Author> authorList = null;
-            Author author = null;
+            Author author;
 
             if (action.equalsIgnoreCase(LIST_ACTION)) {
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
-                int recordDeleted = authorService.removeAuthorById(id);
+                authorService.removeAuthorById(id);
 
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
@@ -107,8 +105,8 @@ public class AuthorController extends HttpServlet {
 
             }
 
-        } catch (Exception e) {
-            destination = "/authorList.jsp";
+        } catch (ClassNotFoundException | NumberFormatException | SQLException e) {
+            destination = "/error.jsp";
             request.setAttribute("errMessage", e.getMessage());
         }
 
@@ -163,5 +161,4 @@ public class AuthorController extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
 }

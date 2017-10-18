@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -102,9 +101,9 @@ public class MySqlDataAccess implements DataAccess {
         
         StringJoiner sj = new StringJoiner(" = ?, ", "", " = ?");
 
-        for (String col : colNames) {
+        colNames.forEach((col) -> {
             sj.add(col);
-        }
+        });
 
         sql += sj + " WHERE " + pkColName + " = ?;"; 
 
@@ -188,7 +187,7 @@ public class MySqlDataAccess implements DataAccess {
         ResultSetMetaData rsmd = rs.getMetaData();
 
         int colCount = rsmd.getColumnCount();
-        Map<String, Object> record = null;
+        Map<String, Object> record;
 
         while (rs.next()) {
             record = new LinkedHashMap<>();

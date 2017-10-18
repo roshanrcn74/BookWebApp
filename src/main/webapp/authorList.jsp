@@ -34,7 +34,7 @@
                 <tbody>
                     <c:forEach var="a" items="${authorList}">
                         <tr>
-                            <td>${a.authorName}</td>
+                            <td class="col-xs-12 col-sm-6 col-md-8">${a.authorName}</td>
                             <td><fmt:formatDate pattern = "yyyy-MM-dd" value = "${a.dateAdded}" /></td>
                             <td><input type="button" class="btn-warning" value="Edit" onclick="location.href = 'ac?action=Edit&id=${a.authorId}'"></td>
                             <td><input type="button" class="btn-danger" value="Delete" onclick="location.href = 'ac?action=Delete&id=${a.authorId}'"></td>
