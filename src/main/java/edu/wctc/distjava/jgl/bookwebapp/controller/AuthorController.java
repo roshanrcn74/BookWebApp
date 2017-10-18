@@ -22,9 +22,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class acts as the Controller servlet for the Author operations. 
- * This controller handles all the operations that come from the UI and 
- * diverts the request to the appropriate method of the service class. 
+ * This class acts as the Controller servlet for the Author operations. This
+ * controller handles all the operations that come from the UI and diverts the
+ * request to the appropriate method of the service class.
+ *
  * @author jlombardo
  */
 @WebServlet(name = "AuthorController", urlPatterns = {"/ac"})
@@ -41,12 +42,29 @@ public class AuthorController extends HttpServlet {
     public static final String UPDATE = "update";
     public static final String REC_ADD = "rec";
     public static final String ID = "id";
-    
+
+    private String driverClass;
+    private String url;
+    private String username;
+    private String password;
+
+    @Override
+    public void init() throws ServletException {
+        driverClass = getServletContext()
+                .getInitParameter("driver.class");
+        url = getServletContext()
+                .getInitParameter("url");
+        username = getServletContext()
+                .getInitParameter("username");
+        password = getServletContext()
+                .getInitParameter("password");
+    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.This method contains the logic to divert the requests to the appropriate 
-     * method of the service class based on the requests coming from the UI.
+     * methods.This method contains the logic to divert the requests to the
+     * appropriate method of the service class based on the requests coming from
+     * the UI.
      *
      * @param request servlet request
      * @param response servlet response
@@ -68,9 +86,13 @@ public class AuthorController extends HttpServlet {
             String butt_action = request.getParameter("button_action");
 
             IAuthorDao dao = new AuthorDao(
-                    "com.mysql.jdbc.Driver",
-                    "jdbc:mysql://localhost:3306/book",
-                    "root", "admin",
+                    //                    "com.mysql.jdbc.Driver",
+                    //                    "jdbc:mysql://localhost:3306/book",
+                    //                    "root", "admin",
+                    driverClass,
+                    url,
+                    username,
+                    password,
                     new MySqlDataAccess()
             );
 
@@ -91,13 +113,13 @@ public class AuthorController extends HttpServlet {
                 destination = "/authorEdit.jsp";
 
             } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
-                if(butt_action.equalsIgnoreCase("Save")){
+                if (butt_action.equalsIgnoreCase("Save")) {
                     if (addEdit.equalsIgnoreCase(UPDATE)) {
                         authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
                     } else {
                         authorService.addAuthor(Arrays.asList(aName, aDateAdded));
-                    }                   
-                } 
+                    }
+                }
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(ADD_ACTION)) {
                 request.setAttribute("date", authorService.getDate());
@@ -116,7 +138,7 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void refreshList(AuthorService authorService, HttpServletRequest request) 
+    private void refreshList(AuthorService authorService, HttpServletRequest request)
             throws ClassNotFoundException, SQLException {
         List<Author> authorList;
         authorList = authorService.getAuthorList();
