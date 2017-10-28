@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class MySqlDataAccess implements DataAccess {
      * @param tableName
      * @param colNames
      * @param colValues
-     * @return
+     * @return 1 or 0
      * @throws SQLException
      */
     @Override
@@ -206,7 +207,7 @@ public class MySqlDataAccess implements DataAccess {
                 "jdbc:mysql://localhost:3306/book",
                 "root", "admin");
 
-//        db.addRecord("author", Arrays.asList("author_name", "date_added"), Arrays.asList("Gathi", "2017-03-05"));
+//       db.addRecord("author", Arrays.asList("author_name", "date_added"), Arrays.asList("Gathi", "2017-03-05"));
 //
 //        int recsDeleted = db.deleteRecordById("author", "author_id", 1);
 //        System.out.println("No. of Recs Deleted: " + recsDeleted);
@@ -217,20 +218,20 @@ public class MySqlDataAccess implements DataAccess {
 //            System.out.println(rec);
 //        }
 //
-//        db.updateRecord("author", Arrays.asList("author_name", "date_added"),
-//                Arrays.asList("Kall Lewis", "2017-08-05"), "author_id", 3);
-//        
-//        List<Map<String, Object>> list1 = db.getAllRecords("author", 0);
-//        
-//        for (Map<String, Object> rec : list1) {
-//            System.out.println(rec);
-//        }
+        db.updateRecord("author", Arrays.asList("author_name", "date_added"),
+                Arrays.asList("Kall Lewis", "2017-08-05"), "author_id", 3);
         
-        Map<String, Object> rec = db.findRecordById("author", "author_id", 15);
-        //if (!record.isEmpty()) System.out.println(" Record found " + record.get(0).get("author_name"));
-
-            System.out.println(" Record found : " + rec.get("author_id") + " "
-                    + rec.get("author_name") + " " + rec.get("date_added"));
+        List<Map<String, Object>> list1 = db.getAllRecords("author", 0);
+//        
+        for (Map<String, Object> rec : list1) {
+            System.out.println(rec);
+        }
+        
+//        Map<String, Object> rec = db.findRecordById("author", "author_id", 15);
+//        //if (!record.isEmpty()) System.out.println(" Record found " + record.get(0).get("author_name"));
+//
+//            System.out.println(" Record found : " + rec.get("author_id") + " "
+//                    + rec.get("author_name") + " " + rec.get("date_added"));
    
         db.closeConnection();
     }

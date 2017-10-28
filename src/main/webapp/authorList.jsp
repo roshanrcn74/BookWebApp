@@ -19,6 +19,7 @@
         <title>Author List</title>
     </head>
     <body>
+        <jsp:include page="header.jsp"/>
         <div class="container">
             <h3>Author List</h3>
             <input type="button" class="btn" value="Add" onclick="location.href = 'ac?action=Add'">
