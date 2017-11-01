@@ -1,28 +1,52 @@
 package edu.wctc.distjava.jgl.bookwebapp.model;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import javax.validation.constraints.Size;
 
 /**
  * This is the POJO used to hold the details of the Author object. Also contains
  * the getter and setter methods for the properties of the author
  * @author jlombardo
  */
-public class Author {
+@Entity
+@Table(name = "author")
+public class Author implements Serializable{
+    private static final long serialVersionUID = 1L;
     
     /**
      * 
      */
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "author_id")
     private Integer authorId;
     
     /**
      * 
      */
+    @Size(max = 80)
+    @Column(name = "author_name")
     private String authorName;
     
     /**
      * 
      */
+    @Column(name = "date_added")
+    @Temporal(TemporalType.DATE)
     private Date dateAdded;
 
     /**

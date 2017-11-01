@@ -6,14 +6,14 @@
 package edu.wctc.distjava.jgl.bookwebapp.controller;
 
 import edu.wctc.distjava.jgl.bookwebapp.model.Author;
-import edu.wctc.distjava.jgl.bookwebapp.model.AuthorDao;
 import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
-import edu.wctc.distjava.jgl.bookwebapp.model.IAuthorDao;
-import edu.wctc.distjava.jgl.bookwebapp.model.MySqlDataAccess;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -43,21 +43,12 @@ public class AuthorController extends HttpServlet {
     public static final String REC_ADD = "rec";
     public static final String ID = "id";
 
-    private String driverClass;
-    private String url;
-    private String username;
-    private String password;
+    @EJB
+    private AuthorService authorService;
 
     @Override
     public void init() throws ServletException {
-        driverClass = getServletContext()
-                .getInitParameter("driver.class");
-        url = getServletContext()
-                .getInitParameter("url");
-        username = getServletContext()
-                .getInitParameter("username");
-        password = getServletContext()
-                .getInitParameter("password");
+
     }
 
     /**
@@ -85,44 +76,34 @@ public class AuthorController extends HttpServlet {
             String id = request.getParameter(ID);
             String butt_action = request.getParameter("button_action");
 
-            IAuthorDao dao = new AuthorDao(
-                    //                    "com.mysql.jdbc.Driver",
-                    //                    "jdbc:mysql://localhost:3306/book",
-                    //                    "root", "admin",
-                    driverClass,
-                    url,
-                    username,
-                    password,
-                    new MySqlDataAccess()
-            );
-
-            AuthorService authorService
-                    = new AuthorService(dao);
-
             Author author;
 
             if (action.equalsIgnoreCase(LIST_ACTION)) {
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
-                authorService.removeAuthorById(id);
+                try {
+                    authorService.removeAuthorById(id);
+                } catch (Exception ex) {
+                    Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+                }
 
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
-                author = authorService.findAuthor(id);
-                request.setAttribute("author", author);
+//                author = authorService.findAuthor(id);
+//                request.setAttribute("author", author);
                 destination = "/authorEdit.jsp";
 
             } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
                 if (butt_action.equalsIgnoreCase("Save")) {
                     if (addEdit.equalsIgnoreCase(UPDATE)) {
-                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
+//                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
                     } else {
-                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
+//                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
                     }
                 }
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(ADD_ACTION)) {
-                request.setAttribute("date", authorService.getDate());
+//                request.setAttribute("date", authorService.getDate());
                 destination = "/authorAdd.jsp";
 
             }
@@ -140,8 +121,12 @@ public class AuthorController extends HttpServlet {
 
     private void refreshList(AuthorService authorService, HttpServletRequest request)
             throws ClassNotFoundException, SQLException {
-        List<Author> authorList;
-        authorList = authorService.getAuthorList();
+        List<Author> authorList = null;
+        try {
+            authorList = authorService.getAuthorList();
+        } catch (Exception e) {
+
+        }
         request.setAttribute("authorList", authorList);
     }
 

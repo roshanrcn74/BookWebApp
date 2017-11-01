@@ -1,163 +1,78 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package edu.wctc.distjava.jgl.bookwebapp.model;
 
+import java.io.Serializable;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 /**
- * Author service class that acts as a provider to the upper layers with the operations of the Author objects
- * @author jlombardo
+ *
+ * @author Roshan
  */
-public class AuthorService {
-    private IAuthorDao authorDao;
+@Stateless
+public class AuthorService implements Serializable {
 
-    /**
-     * Constructor with the DAO object
-     * @param authorDao 
-     */
-    public AuthorService(IAuthorDao authorDao) {
-        setAuthorDao(authorDao);
+    private final String AUTHOR_TBL = "author";
+    private final String AUTHOR_PK = "author_id";
+
+    @PersistenceContext(unitName = "book_PU")
+    private EntityManager em;
+
+    public AuthorService() {
+
     }
 
-    /**
-     * Removes the Author from the author record from the database. 
-     * Returns 1 if the record is removed. Otherwise, returns 0.
-     * @param id
-     * @return
-     * @throws ClassNotFoundException
-     * @throws SQLException
-     * @throws NumberFormatException 
-     */
-    public final int removeAuthorById(String id) 
-            throws ClassNotFoundException, SQLException, 
-            NumberFormatException {
-        
-        if (id == null) {
-            throw new IllegalArgumentException("id must be a Integer greater than 0");
-        }
-        
-        Integer value = Integer.parseInt(id);
+    public EntityManager getEm() {
+        return em;
+    }
 
-        return authorDao.removeAuthorById(value);
+    public void setEm(EntityManager em) {
+        this.em = em;
     }
-    
-    /**
-     * 
-     * @return 
-     */
-    public String getDate(){
-        
-        Date date = new Date();
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");  
-        String strDate= formatter.format(date);  
-        return strDate;
+
+    public final int removeAuthorById(String id) throws Exception {
+        String jpql = "delete from Author a where a.authorId = :id";
+        Query q = getEm().createQuery(jpql);
+        q.setParameter("id", new Integer(id));
+        return q.executeUpdate();
     }
-    
-    /**
-     * Adds the author record to the database with the given parameters. Throws an exception
-     * if the given author id is already existing in the database.
-     * @param colValues
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException 
-     */
-    public int addAuthor(List<Object> colValues) 
-            throws SQLException, ClassNotFoundException{
-        
-        return authorDao.addAuthor(colValues);
+
+    public List<Author> getAuthorList() throws Exception {
+
+        //List<Author> authorList = new ArrayList<>();
+        String jpql = "select a from Author a";
+        TypedQuery<Author> q = getEm().createQuery(jpql, Author.class);
+        q.setMaxResults(500); //optional
+        //authorList = q.getResultList();
+
+        return q.getResultList();
+    }
+
+    public final List<Author> findById(String id) throws Exception {
+        String jpql = "select a from Author a where a.authorId = :id";
+        TypedQuery<Author> q = getEm().createQuery(jpql, Author.class);
+
+        q.setMaxResults(50);
+
+        return q.getResultList();
     }
     
-    /**
-     * Updates the author record with the given details for the selected author record
-     * @param colValues
-     * @param id
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException 
-     */
-    public int updateAuthorById(List <Object> colValues, String id) 
-            throws SQLException, ClassNotFoundException{   
-        return authorDao.updateAuthor(colValues, id);
-    }
-
-    /**
-     * Gets the complete author list from the database
-     * @return
-     * @throws SQLException
-     * @throws ClassNotFoundException 
-     */
-    public List<Author> getAuthorList()
-            throws SQLException, ClassNotFoundException {
-
-        return authorDao.getListOfAuthors();
-    }
-    
-    /**
-     * Finds the Author record for a given author id
-     * @param authorId
-     * @return
-     * @throws ClassNotFoundException
-     * @throws SQLException 
-     */
-    public Author findAuthor(String authorId) 
-            throws ClassNotFoundException, SQLException{
-        int id = Integer.parseInt(authorId);   
-        return authorDao.findAuthorById(id);
-    }
-
-    /**
-     * 
-     * @return 
-     */
-    public IAuthorDao getAuthorDao() {
-        return authorDao;
-    }
-
-    public final void setAuthorDao(IAuthorDao authorDao) {
-        this.authorDao = authorDao;
-    }
-
-    /**
-     * Main method - only for testing
-     * @param args
-     * @throws SQLException
-     * @throws ClassNotFoundException 
-     */
-    public static void main(String[] args)
-            throws SQLException, ClassNotFoundException {
-
-        IAuthorDao dao = new AuthorDao(
-                "com.mysql.jdbc.Driver",
-                "jdbc:mysql://localhost:3306/book",
-                "root", "admin",
-                new MySqlDataAccess()
-        );
-
-        AuthorService authorService
-                = new AuthorService(dao);
-        
-        int recsDeleted = authorService.removeAuthorById("13");
-        
-        System.out.println(recsDeleted + " Author deleted");
-        
-        int recsAdded = authorService.addAuthor(Arrays.asList("Rikad Powel", "2017-10-12"));
-        
-        System.out.println(recsAdded + " Author added");
-        
-        int recsUpdated = authorService.updateAuthorById(Arrays.asList("Joe Root", "2017-09-12"), "15");
-        
-        System.out.println(recsUpdated + " Author updated");
-
-        List<Author> list = authorService.getAuthorList();
-
-        list.forEach((a) -> {
-            System.out.println(a.getAuthorId() + ", "
-                    + a.getAuthorName() + ", " + a.getDateAdded() + "\n");
-        });
-        
-        System.out.println("Author Found : " + authorService.findAuthor("15"));
+    public int updateAuthorById(String id){
+        String jpql = "UPDATE Author a SET a.authorName = (a.authorName) where a.id = :id";
+        Query q = getEm().createQuery(jpql);
+        q.setParameter("id", new Integer(id));
+        return q.executeUpdate();    
         
     }
+
 }
