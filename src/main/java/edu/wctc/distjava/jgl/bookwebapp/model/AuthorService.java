@@ -6,8 +6,6 @@
 package edu.wctc.distjava.jgl.bookwebapp.model;
 
 import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -22,8 +20,10 @@ import javax.persistence.TypedQuery;
 @Stateless
 public class AuthorService implements Serializable {
 
-    private final String AUTHOR_TBL = "author";
-    private final String AUTHOR_PK = "author_id";
+    private static final long serialVersionUID = 1L;
+
+    //private final String AUTHOR_TBL = "author";
+    //private final String AUTHOR_PK = "author_id";
 
     @PersistenceContext(unitName = "book_PU")
     private EntityManager em;
@@ -41,9 +41,11 @@ public class AuthorService implements Serializable {
     }
 
     public final int removeAuthorById(String id) throws Exception {
-        String jpql = "delete from Author a where a.authorId = :id";
+        String jpql = "DELETE FROM Author a where a.authorId = :id";
+        
+        //"DELETE FROM Employee e WHERE e.department IS NULL"
         Query q = getEm().createQuery(jpql);
-        q.setParameter("id", new Integer(id));
+        q.setParameter("id", Integer.parseInt(id));
         return q.executeUpdate();
     }
 
@@ -61,9 +63,6 @@ public class AuthorService implements Serializable {
     public final List<Author> findById(String id) throws Exception {
         String jpql = "select a from Author a where a.authorId = :id";
         TypedQuery<Author> q = getEm().createQuery(jpql, Author.class);
-
-        q.setMaxResults(50);
-
         return q.getResultList();
     }
     

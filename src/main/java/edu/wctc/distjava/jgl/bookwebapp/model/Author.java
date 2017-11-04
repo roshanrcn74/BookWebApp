@@ -38,7 +38,7 @@ public class Author implements Serializable{
     /**
      * 
      */
-    @Size(max = 80)
+    @Size(max = 45)
     @Column(name = "author_name")
     private String authorName;
     

@@ -42,6 +42,7 @@ public class AuthorController extends HttpServlet {
     public static final String UPDATE = "update";
     public static final String REC_ADD = "rec";
     public static final String ID = "id";
+    private static final long serialVersionUID = 1L;
 
     @EJB
     private AuthorService authorService;
@@ -83,8 +84,11 @@ public class AuthorController extends HttpServlet {
             } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
                 try {
                     authorService.removeAuthorById(id);
+                    refreshList(authorService, request);
                 } catch (Exception ex) {
-                    Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+                    destination = "/error.jsp";
+                    request.setAttribute("errMessage", ex.getMessage());
+                    //Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 refreshList(authorService, request);
