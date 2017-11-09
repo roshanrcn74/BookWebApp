@@ -30,7 +30,7 @@
                     </tr>
                     <tr>
                         <td>Date Added  : </td>
-                        <td><input type="text" class="form-control" placeholder="Date Added" name="aDateAdded" value="${author.dateAdded}" readonly></td>
+                        <td><input type="text" class="form-control" placeholder="Date Added" name="aDateAdded" value = "<fmt:formatDate pattern = "yyyy-MM-dd" value="${author.dateAdded}"/>" readonly></td>
                     </tr>
                 </table>                        
                 <p><button name="button_action" type="submit" value="Save">Save</button>

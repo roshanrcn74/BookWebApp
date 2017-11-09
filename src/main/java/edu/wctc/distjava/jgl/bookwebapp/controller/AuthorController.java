@@ -9,7 +9,9 @@ import edu.wctc.distjava.jgl.bookwebapp.model.Author;
 import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -37,7 +39,9 @@ public class AuthorController extends HttpServlet {
     public static final String EDIT_ACTION = "Edit";
     public static final String SAVECANCEL_ACTION = "SaveCancel";
     public static final String ADD_ACTION = "Add";
+    public static final String A_NAME = "author_name";
     public static final String AUTHOR_NAME = "aName";
+    public static final String D_ADDED = "date_added";
     public static final String DATE_ADDED = "aDateAdded";
     public static final String UPDATE = "update";
     public static final String REC_ADD = "rec";
@@ -93,21 +97,36 @@ public class AuthorController extends HttpServlet {
 
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
-//                author = authorService.findAuthor(id);
-//                request.setAttribute("author", author);
+                try {
+                    author = authorService.findAuthor(id);
+                    request.setAttribute("author", author);                    
+                } catch (Exception ex) {
+                    Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 destination = "/authorEdit.jsp";
 
             } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
                 if (butt_action.equalsIgnoreCase("Save")) {
+                    try{
                     if (addEdit.equalsIgnoreCase(UPDATE)) {
-//                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
+                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
                     } else {
-//                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
+                        
+                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
+                        refreshList(authorService, request);
+                        
+                    }
+                    }
+                    catch(Exception ex){
+                        destination = "/error.jsp";
+                        request.setAttribute("errMessage", ex.getMessage());
+                        
                     }
                 }
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(ADD_ACTION)) {
-//                request.setAttribute("date", authorService.getDate());
+                request.setAttribute("date", authorService.currentDate());
                 destination = "/authorAdd.jsp";
 
             }
