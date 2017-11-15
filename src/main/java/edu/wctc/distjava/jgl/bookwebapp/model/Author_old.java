@@ -17,13 +17,13 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.Size;
 
 /**
- * This is the POJO used to hold the details of the Author object. Also contains
+ * This is the POJO used to hold the details of the Author_old object. Also contains
  * the getter and setter methods for the properties of the author
  * @author jlombardo
  */
 @Entity
 @Table(name = "author")
-public class Author implements Serializable{
+public class Author_old implements Serializable{
     private static final long serialVersionUID = 1L;
     
     /**
@@ -52,14 +52,14 @@ public class Author implements Serializable{
     /**
      * The default constructor
      */
-    public Author() {
+    public Author_old() {
     }
 
     /**
      * 
      * @param authorId 
      */
-    public Author(Integer authorId) {
+    public Author_old(Integer authorId) {
         this.authorId = authorId;
     }
 
@@ -69,7 +69,7 @@ public class Author implements Serializable{
      * @param authorName
      * @param dateAdded 
      */
-    public Author(Integer authorId, String authorName, Date dateAdded) {
+    public Author_old(Integer authorId, String authorName, Date dateAdded) {
         this.authorId = authorId;
         this.authorName = authorName;
         this.dateAdded = dateAdded;
@@ -138,7 +138,7 @@ public class Author implements Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Author other = (Author) obj;
+        final Author_old other = (Author_old) obj;
         if (!Objects.equals(this.authorId, other.authorId)) {
             return false;
         }
