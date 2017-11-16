@@ -3,63 +3,54 @@ package edu.wctc.distjava.jgl.bookwebapp.model;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Set;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
- * This is the POJO used to hold the details of the Author_old object. Also contains
+ * This is the POJO used to hold the details of the Author object. Also contains
  * the getter and setter methods for the properties of the author
  * @author jlombardo
  */
 @Entity
 @Table(name = "author")
-public class Author_old implements Serializable{
+public class Author implements Serializable{
+
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    private Set<Book> bookSet;
     private static final long serialVersionUID = 1L;
-    
-    /**
-     * 
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "author_id")
     private Integer authorId;
-    
-    /**
-     * 
-     */
+
     @Size(max = 45)
     @Column(name = "author_name")
     private String authorName;
-    
-    /**
-     * 
-     */
+
     @Column(name = "date_added")
     @Temporal(TemporalType.DATE)
     private Date dateAdded;
 
-    /**
-     * The default constructor
-     */
-    public Author_old() {
+    public Author() {
     }
 
-    /**
-     * 
-     * @param authorId 
-     */
-    public Author_old(Integer authorId) {
+    public Author(Integer authorId) {
         this.authorId = authorId;
     }
 
@@ -69,7 +60,7 @@ public class Author_old implements Serializable{
      * @param authorName
      * @param dateAdded 
      */
-    public Author_old(Integer authorId, String authorName, Date dateAdded) {
+    public Author(Integer authorId, String authorName, Date dateAdded) {
         this.authorId = authorId;
         this.authorName = authorName;
         this.dateAdded = dateAdded;
@@ -138,7 +129,7 @@ public class Author_old implements Serializable{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Author_old other = (Author_old) obj;
+        final Author other = (Author) obj;
         if (!Objects.equals(this.authorId, other.authorId)) {
             return false;
         }
@@ -149,4 +140,13 @@ public class Author_old implements Serializable{
     public String toString() {
         return "Author{" + "authorId=" + authorId + ", authorName=" + authorName + ", dateAdded=" + dateAdded + '}';
     }        
+
+    @XmlTransient
+    public Set<Book> getBookSet() {
+        return bookSet;
+    }
+
+    public void setBookSet(Set<Book> bookSet) {
+        this.bookSet = bookSet;
+    }
 }

@@ -5,13 +5,12 @@
  */
 package edu.wctc.distjava.jgl.bookwebapp.controller;
 
-import edu.wctc.distjava.jgl.bookwebapp.model.Author_old;
-import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService_old;
+import edu.wctc.distjava.jgl.bookwebapp.model.Author;
+import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
+//import edu.wctc.distjava.jgl.bookwebapp.model.AuthorServiceOld;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,7 +23,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * This class acts as the Controller servlet for the Author_old operations. This
+ * This class acts as the Controller servlet for the Author operations. This
  * controller handles all the operations that come from the UI and diverts the
  * request to the appropriate method of the service class.
  *
@@ -49,7 +48,7 @@ public class AuthorController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     @EJB
-    private AuthorService_old authorService;
+    private AuthorService authorService;
 
     @Override
     public void init() throws ServletException {
@@ -81,7 +80,7 @@ public class AuthorController extends HttpServlet {
             String id = request.getParameter(ID);
             String butt_action = request.getParameter("button_action");
 
-            Author_old author;
+            Author author;
 
             if (action.equalsIgnoreCase(LIST_ACTION)) {
                 refreshList(authorService, request);
@@ -98,7 +97,7 @@ public class AuthorController extends HttpServlet {
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
                 try {
-                    author = authorService.findAuthor(id);
+                    author = authorService.find(new Integer(id));
                     request.setAttribute("author", author);                    
                 } catch (Exception ex) {
                     Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
@@ -142,11 +141,11 @@ public class AuthorController extends HttpServlet {
 
     }
 
-    private void refreshList(AuthorService_old authorService, HttpServletRequest request)
+    private void refreshList(AuthorService authorService, HttpServletRequest request)
             throws ClassNotFoundException, SQLException {
-        List<Author_old> authorList = null;
+        List<Author> authorList = null;
         try {
-            authorList = authorService.getAuthorList();
+            authorList = authorService.getList();
         } catch (Exception e) {
 
         }

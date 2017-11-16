@@ -15,6 +15,7 @@
         <h1>Pick a Task</h1>
         <ul>
             <li><a href="ac?action=displayList">View all Authors</a></li>
+            <li><a href="bc?action=displayList">View all Books</a></li>
         </ul>
         
     </body>

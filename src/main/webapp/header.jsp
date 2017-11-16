@@ -8,6 +8,6 @@
 <!DOCTYPE html>
 <div class="container">
     <h1> Book Web Application</h1>
-    <p>Author Information</p>
+    <p>Author/Book Information</p>
 </div>
     

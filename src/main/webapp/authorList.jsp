@@ -28,6 +28,7 @@
                     <tr>
                         <th>Author Name</th>
                         <th>Date Added</th>
+                        <th>BookList</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
@@ -37,6 +38,7 @@
                         <tr>
                             <td class="col-xs-12 col-sm-6 col-md-8">${a.authorName}</td>
                             <td><fmt:formatDate pattern = "yyyy-MM-dd" value = "${a.dateAdded}" /></td>
+                            <td></td>
                             <td><input type="button" class="btn-warning" value="Edit" onclick="location.href = 'ac?action=Edit&id=${a.authorId}'"></td>
                             <td><input type="button" class="btn-danger" value="Delete" onclick="location.href = 'ac?action=Delete&id=${a.authorId}'"></td>
                         </tr>

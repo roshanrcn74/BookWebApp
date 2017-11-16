@@ -21,7 +21,7 @@ import javax.persistence.TypedQuery;
  * @author Roshan
  */
 @Stateless
-public class AuthorService_old implements Serializable {
+public class AuthorServiceOld implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -31,7 +31,7 @@ public class AuthorService_old implements Serializable {
     @PersistenceContext(unitName = "book_PU")
     private EntityManager em;
 
-    public AuthorService_old() {
+    public AuthorServiceOld() {
 
     }
 
@@ -52,42 +52,42 @@ public class AuthorService_old implements Serializable {
         return q.executeUpdate();
     }
     
-//    public void removeAuthor(Author_old author){
+//    public void removeAuthor(Author author){
 //        getEm().remove(getEm().merge(author));
 //    }
     
     public void addAuthor(List<Object> colValues) throws Exception {
-        Author_old author = new Author_old();
+        Author author = new Author();
         author.setAuthorName(colValues.get(0).toString());
         //author.setDateAdded((Date)colValues.get(1));
         author.setDateAdded(new Date());
         getEm().persist(author);
     }
 
-    public List<Author_old> getAuthorList() throws Exception {
+    public List<Author> getAuthorList() throws Exception {
 
         //List<Author> authorList = new ArrayList<>();
         String jpql = "select a from Author a";
-        TypedQuery<Author_old> q = getEm().createQuery(jpql, Author_old.class);
+        TypedQuery<Author> q = getEm().createQuery(jpql, Author.class);
         q.setMaxResults(500); //optional
         //authorList = q.getResultList();
 
         return q.getResultList();
     }
 
-    public  Author_old findAuthor(String id) throws Exception {
-//        String jpql = "select a from Author_old a where a.authorId = :id";
-//        TypedQuery<Author> q = getEm().createQuery(jpql, Author_old.class);
+    public  Author findAuthor(String id) throws Exception {
+//        String jpql = "select a from Author a where a.authorId = :id";
+//        TypedQuery<Author> q = getEm().createQuery(jpql, Author.class);
 //        q.setParameter("id", new Integer(id));
 ////        return q.getResultList().get(0);
 //        return q.getSingleResult();
           int authorId = Integer.parseInt(id);
-          return getEm().find(Author_old.class, authorId);
+          return getEm().find(Author.class, authorId);
     }
     
     public void updateAuthorById(List<Object> colValues, String id) throws ParseException{
         int authorId = Integer.parseInt(id);
-        Author_old author = getEm().find(Author_old.class, authorId);
+        Author author = getEm().find(Author.class, authorId);
         author.setAuthorName(colValues.get(0).toString());
         author.setDateAdded(getDate(colValues.get(1).toString()));
         
