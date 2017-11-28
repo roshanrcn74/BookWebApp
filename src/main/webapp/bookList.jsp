@@ -20,11 +20,13 @@
         <body>
         <jsp:include page="header.jsp"/>
         <div class="container">
+            <input type="button" class="btn-warning" value="Author List" onclick="location.href = 'ac?action=displayList'">
             <h3>Book List</h3>
             <input type="button" class="btn" value="Add" onclick="location.href = 'bc?action=Add'">
             <table class="tabe table-striped table-bordered table-hover table-condensed">
                 <thead>
                     <tr>
+                        <th>Book ID</th>
                         <th>Book Title</th>
                         <th>ISBN</th>
                         <th>Author</th>
@@ -35,11 +37,12 @@
                 <tbody>
                     <c:forEach var="b" items="${bookList}">
                         <tr>
+                            <td>${b.bookId}</td>
                             <td class="col-xs-12 col-sm-6 col-md-6">${b.title}</td>
                             <td>${b.isbn}</td>
-                            <td>${b.getAuthor().authorName}</td>
-                            <td><input type="button" class="btn-warning" value="Edit" onclick="location.href = 'bc?action=Edit&id=${b.bookId}'"></td>
-                            <td><input type="button" class="btn-danger" value="Delete" onclick="location.href = 'bc?action=Delete&id=${b.bookId}'"></td>
+                            <td>${b.author.authorName}</td>
+                            <td><input type="button" class="btn-warning" value="Edit" onclick="location.href = 'bc?action=Edit&bId=${b.bookId}'"></td>
+                            <td><input type="button" class="btn-danger" value="Delete" onclick="location.href = 'bc?action=Delete&bId=${b.bookId}'"></td>
                         </tr>
                     </c:forEach>
                 </tbody>    

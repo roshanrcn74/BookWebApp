@@ -7,7 +7,7 @@ package edu.wctc.distjava.jgl.bookwebapp.controller;
 
 import edu.wctc.distjava.jgl.bookwebapp.model.Author;
 import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
-//import edu.wctc.distjava.jgl.bookwebapp.model.AuthorServiceOld;
+import edu.wctc.distjava.jgl.bookwebapp.model.BookService;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -49,6 +49,9 @@ public class AuthorController extends HttpServlet {
 
     @EJB
     private AuthorService authorService;
+    
+    @EJB
+    private BookService bookService;
 
     @Override
     public void init() throws ServletException {
@@ -128,7 +131,7 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute("date", authorService.currentDate());
                 destination = "/authorAdd.jsp";
 
-            }
+            } 
 
         } catch (ClassNotFoundException | NumberFormatException | SQLException e) {
             destination = "/error.jsp";
@@ -150,6 +153,7 @@ public class AuthorController extends HttpServlet {
 
         }
         request.setAttribute("authorList", authorList);
+        request.setAttribute("bookList", bookService.getList());
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -40,8 +40,7 @@ public class AuthorService extends AbstractFacade<Author> {
         Author author = new Author();
         author.setAuthorName(colValues.get(0).toString());
         author.setDateAdded(getDate(colValues.get(1).toString()));
-        //author.setDateAdded(new Date());
-        create(author);
+        this.create(author);
     }
     
     public void updateAuthorById(List<Object> colValues, String id) throws ParseException{
@@ -49,8 +48,7 @@ public class AuthorService extends AbstractFacade<Author> {
         Author author = (Author) find(authorId);
         author.setAuthorName(colValues.get(0).toString());
         author.setDateAdded(getDate(colValues.get(1).toString()));
-        edit(author);
-        //getEm().merge(author);    
+        edit(author);  
     }
     
     public void removeAuthorById(String id) throws Exception {
