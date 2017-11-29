@@ -41,11 +41,11 @@
                             <td class="col-xs-12 col-sm-6 col-md-4">${a.authorName}</td>
                             <td><fmt:formatDate pattern = "yyyy-MM-dd" value = "${a.dateAdded}" /></td>
                             <td>
-                                <select name="bTitle" size="1" width="30">
+                                <select name="bookId" size="1" width="30">
                                     <c:forEach var="b" items="${bookList}">                                       
                                             <c:choose>
                                                 <c:when test="${a.authorId == b.author.authorId}">                                                    
-                                                        <option value="">
+                                                        <option value="b.bookId">
                                                             ${b.title}                                                   
                                                             <br/>
                                                         </option>                                                    
