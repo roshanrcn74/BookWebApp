@@ -10,17 +10,21 @@ import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
 import edu.wctc.distjava.jgl.bookwebapp.model.BookService;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * This class acts as the Controller servlet for the Author operations. This
@@ -47,15 +51,18 @@ public class AuthorController extends HttpServlet {
     public static final String ID = "id";
     private static final long serialVersionUID = 1L;
 
-    @EJB
-    private AuthorService authorService;
-    
-    @EJB
-    private BookService bookService;
+    // Ask Spring for object to inject
+    ServletContext sctx;
+    WebApplicationContext ctx;
+    AuthorService authorService;
+    BookService bookService;
 
     @Override
-    public void init() throws ServletException {
-
+    public void init() {
+        sctx = getServletContext();
+        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }
 
     /**
@@ -100,8 +107,8 @@ public class AuthorController extends HttpServlet {
                 refreshList(authorService, request);
             } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
                 try {
-                    author = authorService.find(new Integer(id));
-                    request.setAttribute("author", author);                    
+                    author = authorService.findById(id);
+                    request.setAttribute("author", author);
                 } catch (Exception ex) {
                     Logger.getLogger(AuthorController.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -110,20 +117,19 @@ public class AuthorController extends HttpServlet {
 
             } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
                 if (butt_action.equalsIgnoreCase("Save")) {
-                    try{
-                    if (addEdit.equalsIgnoreCase(UPDATE)) {
-                        authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
-                    } else {
-                        
-                        authorService.addAuthor(Arrays.asList(aName, aDateAdded));
-                        refreshList(authorService, request);
-                        
-                    }
-                    }
-                    catch(Exception ex){
+                    try {
+                        if (addEdit.equalsIgnoreCase(UPDATE)) {
+                            authorService.updateAuthorById(Arrays.asList(aName, aDateAdded), id);
+                        } else {
+
+                            authorService.addAuthor(Arrays.asList(aName, aDateAdded));
+                            refreshList(authorService, request);
+
+                        }
+                    } catch (ClassNotFoundException | SQLException | ParseException ex) {
                         destination = "/error.jsp";
                         request.setAttribute("errMessage", ex.getMessage());
-                        
+
                     }
                 }
                 refreshList(authorService, request);
@@ -131,7 +137,7 @@ public class AuthorController extends HttpServlet {
                 request.setAttribute("date", authorService.currentDate());
                 destination = "/authorAdd.jsp";
 
-            } 
+            }
 
         } catch (ClassNotFoundException | NumberFormatException | SQLException e) {
             destination = "/error.jsp";
@@ -148,12 +154,12 @@ public class AuthorController extends HttpServlet {
             throws ClassNotFoundException, SQLException {
         List<Author> authorList = null;
         try {
-            authorList = authorService.getList();
+            authorList = authorService.findAll();
         } catch (Exception e) {
 
         }
         request.setAttribute("authorList", authorList);
-        request.setAttribute("bookList", bookService.getList());
+        request.setAttribute("bookList", bookService.findAll());
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

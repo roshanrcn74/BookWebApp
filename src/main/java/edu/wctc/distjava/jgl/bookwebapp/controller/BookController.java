@@ -10,13 +10,15 @@ import edu.wctc.distjava.jgl.bookwebapp.model.BookService;
 import edu.wctc.distjava.jgl.bookwebapp.model.AuthorService;
 import java.io.IOException;
 import java.util.List;
-import javax.ejb.EJB;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  *
@@ -24,12 +26,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "BookController", urlPatterns = {"/bc"})
 public class BookController extends HttpServlet {
-
-    @EJB
-    private AuthorService authorService;
-    
-    @EJB
-    private BookService bookService;
 
     public static final String ACTION = "action";
     public static final String LIST_ACTION = "displayList";
@@ -42,17 +38,23 @@ public class BookController extends HttpServlet {
     public static final String BOOK_TITLE = "bTitle";
     public static final String BOOK_ISBN = "bIsbn";
     public static final String BOOK_AUTHOR = "bAuthorId";
-    
+
     public static final String BOOK_LIST_PAGE = "/bookList.jsp";
     public static final String BOOK_ADD_EDIT_PAGE = "/bookAddEdit.jsp";
 
     private static final long serialVersionUID = 1L;
 
-
+    ServletContext sctx;
+    WebApplicationContext ctx;
+    AuthorService authorService;
+    BookService bookService;
 
     @Override
-    public void init() throws ServletException {
-
+    public void init() {
+        sctx = getServletContext();
+        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }
 
     /**
@@ -74,9 +76,9 @@ public class BookController extends HttpServlet {
         String bookTitle = request.getParameter(BOOK_TITLE);
         String bookIsbn = request.getParameter(BOOK_ISBN);
         String bookAuthorId = request.getParameter(BOOK_AUTHOR);
-        
+
         String butt_action = request.getParameter(BUTTON_ACTION);
-        
+
         try {
 
             // Book book;
@@ -85,42 +87,37 @@ public class BookController extends HttpServlet {
             } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
                 bookService.deleteById(bookId);
                 refreshBookList(request);
-            } else if (action.equalsIgnoreCase(ADD_ACTION)){
-                request.setAttribute("authorList", authorService.getList());
+            } else if (action.equalsIgnoreCase(ADD_ACTION)) {
+                request.setAttribute("authorList", authorService.findAll());
                 request.setAttribute("authorId", bookAuthorId);
                 destination = BOOK_ADD_EDIT_PAGE;
-                
-            } else if (action.equalsIgnoreCase(EDIT_ACTION)){
-                request.setAttribute("authorList", authorService.getList());
+            } else if (action.equalsIgnoreCase(EDIT_ACTION)) {
+                request.setAttribute("authorList", authorService.findAll());
                 request.setAttribute("book", bookService.findBook(bookId));
                 destination = BOOK_ADD_EDIT_PAGE;
-                
-                
-            }else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
+
+            } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
                 if (butt_action.equalsIgnoreCase("Save")) {
-                    if (bookId == null || bookId.isEmpty()){
-                        
+                    if (bookId == null || bookId.isEmpty()) {
+
                     }
                     bookService.addOrUpdateBook(bookId, bookTitle, bookIsbn, bookAuthorId);
                 }
                 refreshBookList(request);
             }
-            
         } catch (Exception ex) {
             destination = "/error.jsp";
             request.setAttribute("errMessage", ex.getMessage());
-
         }
 
         RequestDispatcher view
                 = request.getRequestDispatcher(destination);
         view.forward(request, response);
-
     }
 
     private void refreshBookList(HttpServletRequest request) {
         List<Book> bookList;
-        bookList = bookService.getList();
+        bookList = bookService.findAll();
         request.setAttribute("bookList", bookList);
     }
 

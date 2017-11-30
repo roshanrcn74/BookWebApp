@@ -5,27 +5,29 @@
  */
 package edu.wctc.distjava.jgl.bookwebapp.model;
 
-import javax.ejb.Stateless;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import edu.wctc.distjava.jgl.bookwebapp.repository.AuthorRepository;
+import edu.wctc.distjava.jgl.bookwebapp.repository.BookRepository;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  *
  * @author Roshan
  */
-@Stateless
-public class BookService extends AbstractFacade<Book> {
+@Service
+public class BookService{
+    
+    @Autowired
+    private AuthorRepository authorRepo;
+    
+    @Autowired
+    private BookRepository bookRepo;
 
-    @PersistenceContext(unitName = "book_PU")
-    private EntityManager em;
 
-    @Override
-    protected EntityManager getEm() {
-        return em;
-    }
 
     public BookService() {
-        super(Book.class);
+
     }
 
 //    public void addNewBook(String title, String isbn, String authorId){
@@ -53,21 +55,25 @@ public class BookService extends AbstractFacade<Book> {
 
         book.setTitle(title);
         book.setIsbn(isbn);
-        Author author = getEm().find(Author.class, new Integer(authorId));
+        Author author = authorRepo.findOne(Integer.parseInt(authorId));
         book.setAuthor(author);
 
-        getEm().merge(book);
+        bookRepo.save(book);
     }
     
     public void deleteById(String bookId){
 //        Book book = getEm().find(Book.class, bookId);
 //        getEm().remove(book);
-          Book book = getEm().find(Book.class, new Integer(bookId));
-          remove(book);
+          Book book = bookRepo.findOne(Integer.parseInt(bookId));
+          bookRepo.delete(book);
     }
     
     public Book findBook(String bookId){
-        int id = new Integer(bookId);
-        return getEm().find(Book.class, id);
+
+        return bookRepo.findOne(Integer.parseInt(bookId));
+    }
+    
+    public List<Book> findAll(){
+        return bookRepo.findAll();
     }
 }
