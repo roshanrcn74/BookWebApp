@@ -23,7 +23,7 @@
         <div class="container">
             <input type="button" class="btn-warning" value="Book List" onclick="location.href = 'bc?action=displayList'">
             <h3>Author List</h3>
-            <input type="button" class="btn" value="Add" onclick="location.href = 'ac?action=Add'">
+            <input type="button" class="btn-warning" value="Add Author" onclick="location.href = 'ac?action=Add'">
             <table class="tabe table-striped table-bordered table-hover table-condensed">
                 <thead>
                     <tr>
@@ -61,7 +61,7 @@
                     </c:forEach>
                 </tbody>    
             </table>
-            <input type="button" class="btn" value="Add" onclick="location.href = 'ac?action=Add'">
+            <input type="button" class="btn-warning" value="Add Author" onclick="location.href = 'ac?action=Add'">
         </div>     
     </body>
 </html>
