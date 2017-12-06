@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -52,18 +51,18 @@ public class AuthorController extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
     // Ask Spring for object to inject
-    ServletContext sctx;
-    WebApplicationContext ctx;
-    AuthorService authorService;
-    BookService bookService;
+    private ServletContext sctx;
+    private WebApplicationContext ctx;
+    private AuthorService authorService;
+    private BookService bookService;
 
-    @Override
-    public void init() {
-        sctx = getServletContext();
-        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
-        authorService = (AuthorService) ctx.getBean("authorService");
-        bookService = (BookService) ctx.getBean("bookService");
-    }
+//    @Override
+//    public void init(){
+//        sctx = getServletContext();
+//        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+//        authorService = (AuthorService) ctx.getBean("authorService");
+//        bookService = (BookService) ctx.getBean("bookService");
+//    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -199,5 +198,13 @@ public class AuthorController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    @Override
+    public void init(){
+        sctx = getServletContext();
+        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }// </editor-fold>
 }

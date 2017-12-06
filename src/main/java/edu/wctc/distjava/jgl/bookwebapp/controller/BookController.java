@@ -38,24 +38,25 @@ public class BookController extends HttpServlet {
     public static final String BOOK_TITLE = "bTitle";
     public static final String BOOK_ISBN = "bIsbn";
     public static final String BOOK_AUTHOR = "bAuthorId";
+    public static final String FIND_ACTION = "Find";
 
     public static final String BOOK_LIST_PAGE = "/bookList.jsp";
     public static final String BOOK_ADD_EDIT_PAGE = "/bookAddEdit.jsp";
 
     private static final long serialVersionUID = 1L;
 
-    ServletContext sctx;
-    WebApplicationContext ctx;
-    AuthorService authorService;
-    BookService bookService;
+    private ServletContext sctx;
+    private WebApplicationContext ctx;
+    private AuthorService authorService;
+    private BookService bookService;
 
-    @Override
-    public void init() {
-        sctx = getServletContext();
-        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
-        authorService = (AuthorService) ctx.getBean("authorService");
-        bookService = (BookService) ctx.getBean("bookService");
-    }
+//    @Override
+//    public void init() {
+//        sctx = getServletContext();
+//        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+//        authorService = (AuthorService) ctx.getBean("authorService");
+//        bookService = (BookService) ctx.getBean("bookService");
+//    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -80,12 +81,18 @@ public class BookController extends HttpServlet {
         String butt_action = request.getParameter(BUTTON_ACTION);
 
         try {
-
             // Book book;
             if (action.equalsIgnoreCase(LIST_ACTION)) {
                 refreshBookList(request);
-            } else if (action.equalsIgnoreCase(DELETE_ACTION)) {
-                bookService.deleteById(bookId);
+            } else if (action.equalsIgnoreCase(FIND_ACTION)) {
+                request.setAttribute("bookIdList", bookService.selectBookIdList(bookId));
+                refreshBookList(request);
+            }else if (action.equalsIgnoreCase(DELETE_ACTION)) {
+                if (bookId != null){
+                    bookService.deleteById(bookId);
+                } else{
+                    bookService.deleteBooks();
+                }                
                 refreshBookList(request);
             } else if (action.equalsIgnoreCase(ADD_ACTION)) {
                 request.setAttribute("authorList", authorService.findAll());
@@ -95,7 +102,6 @@ public class BookController extends HttpServlet {
                 request.setAttribute("authorList", authorService.findAll());
                 request.setAttribute("book", bookService.findBook(bookId));
                 destination = BOOK_ADD_EDIT_PAGE;
-
             } else if (action.equalsIgnoreCase(SAVECANCEL_ACTION)) {
                 if (butt_action.equalsIgnoreCase("Save")) {
                     if (bookId == null || bookId.isEmpty()) {
@@ -158,6 +164,14 @@ public class BookController extends HttpServlet {
     @Override
     public String getServletInfo() {
         return "Short description";
+    }
+
+    @Override
+    public void init() {
+        sctx = getServletContext();
+        ctx = WebApplicationContextUtils.getWebApplicationContext(sctx);
+        authorService = (AuthorService) ctx.getBean("authorService");
+        bookService = (BookService) ctx.getBean("bookService");
     }// </editor-fold>
 
 }

@@ -9,6 +9,7 @@ import edu.wctc.distjava.jgl.bookwebapp.repository.AuthorRepository;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -41,6 +42,7 @@ public class AuthorService  {
         Author author = new Author();
         author.setAuthorName(authorName);
         author.setDateAdded(dateAdded);
+        author.setBookSet(new HashSet());
         
         authorRepo.save(author);
         //authorRepo.saveAndFlush(author);

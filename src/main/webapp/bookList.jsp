@@ -23,9 +23,11 @@
             <input type="button" class="btn-warning" value="Author List" onclick="location.href = 'ac?action=displayList'">
             <h3>Book List</h3>
             <input type="button" class="btn-warning" value="Add Book" onclick="location.href = 'bc?action=Add'">
+            <input type="button" class="btn-warning" value="Delete Selected Books" onclick="location.href = 'bc?action=Delete'">
             <table class="tabe table-striped table-bordered table-hover table-condensed">
                 <thead>
                     <tr>
+                        <th>Select ID</th>
                         <th>Book ID</th>
                         <th>Book Title</th>
                         <th>ISBN</th>
@@ -37,6 +39,14 @@
                 <tbody>
                     <c:forEach var="b" items="${bookList}">
                         <tr>
+                            <td><input type="checkbox" name="booksId" value="${b.bookId}" 
+                                    <c:forEach var="id" items="${bookIdList}">                                       
+                                            <c:choose>
+                                                <c:when test="${id == b.bookId}">                                                    
+                                                         checked = "checked"                                                
+                                                </c:when>            
+                                            </c:choose>                                      
+                                    </c:forEach> onclick="location.href = 'bc?action=Find&bId=${b.bookId}'"></td>
                             <td>${b.bookId}</td>
                             <td class="col-xs-12 col-sm-6 col-md-6">${b.title}</td>
                             <td>${b.isbn}</td>
@@ -48,6 +58,7 @@
                 </tbody>    
             </table>
             <input type="button" class="btn-warning" value="Add Book" onclick="location.href = 'bc?action=Add'">
+            <input type="button" class="btn-warning" value="Delete Selected Books" onclick="location.href = 'bc?action=Delete'">
         </div>     
     </body>
 </html>
