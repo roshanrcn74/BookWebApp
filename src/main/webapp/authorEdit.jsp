@@ -10,6 +10,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,6 +20,7 @@
         <title>Edit Author</title>
     </head>
     <body>
+        <jsp:include page="header.jsp"/>
         <div class="container">
             <h3>Update Author Name</h3>
             <form name="author" method="POST" action="ac?action=SaveCancel&rec=update">

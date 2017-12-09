@@ -19,6 +19,7 @@
         <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
     </listener>
     <!-- END Spring configuration -->
+    
     <!-- begin additional Spring Security config -->
     <filter>
         <filter-name>springSecurityFilterChain</filter-name>

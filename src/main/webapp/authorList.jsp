@@ -10,6 +10,7 @@
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -30,8 +31,10 @@
                         <th>Author Name</th>
                         <th>Date Added</th>
                         <th>BookList</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
+                            <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                            <th>Edit</th>
+                            <th>Delete</th>
+                            </sec:authorize>
                         <th>Add Book</th>
                     </tr>
                 </thead>
@@ -43,19 +46,30 @@
                             <td>
                                 <select name="bTitle" size="1" width="30">
                                     <c:forEach var="b" items="${bookList}">                                       
-                                            <c:choose>
-                                                <c:when test="${a.authorId == b.author.authorId}">                                                    
-                                                        <option value="">
-                                                            ${b.title}                                                   
-                                                            <br/>
-                                                        </option>                                                    
-                                                </c:when>            
-                                            </c:choose>                                      
+                                        <c:choose>
+                                            <c:when test="${a.authorId == b.author.authorId}">                                                    
+                                                <option value="">
+                                                    ${b.title}                                                   
+                                                <br/>
+                                                </option>                                                    
+                                            </c:when>            
+                                        </c:choose>                                      
                                     </c:forEach>
                                 </select>
                             </td>
-                            <td><input type="button" class="btn-warning" value="Edit" onclick="location.href = 'ac?action=Edit&id=${a.authorId}'"></td>
-                            <td><input type="button" class="btn-danger" value="Delete" onclick="location.href = 'ac?action=Delete&id=${a.authorId}'"></td>
+                            <sec:authorize access="hasAnyRole('ROLE_MGR')">
+                                <td>
+
+                                    <input type="button" class="btn-warning" value="Edit" onclick="location.href = 'ac?action=Edit&id=${a.authorId}'">
+
+                                </td>
+
+                                <td>
+
+                                    <input type="button" class="btn-danger" value="Delete" onclick="location.href = 'ac?action=Delete&id=${a.authorId}'">
+
+                                </td>
+                            </sec:authorize>
                             <td><input type="button" class="btn-danger" value="Add Book" onclick="location.href = 'bc?action=Add&bAuthorId=${a.authorId}'"></td>
                         </tr>
                     </c:forEach>

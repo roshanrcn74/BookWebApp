@@ -7,9 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
 <%@page import="edu.wctc.distjava.jgl.bookwebapp.model.Author"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
-<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %> 
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html>
 <html>
     <head>
@@ -19,6 +20,7 @@
         <title>Add Author</title>
     </head>
     <body>
+        <jsp:include page="header.jsp"/>
         <div class="container">
             <h3>Add Author Name</h3>
             <form name="author" method="POST" action="ac?action=SaveCancel&rec=new">

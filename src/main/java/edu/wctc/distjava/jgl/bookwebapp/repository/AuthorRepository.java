@@ -3,7 +3,6 @@ package edu.wctc.distjava.jgl.bookwebapp.repository;
 
 import edu.wctc.distjava.jgl.bookwebapp.model.Author;
 import java.io.Serializable;
-import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
